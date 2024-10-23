@@ -1,0 +1,28 @@
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    commetsAllowed: Boolean!
+    comments: [Comment!]
+}
+
+input GetPostInput {
+    id: ID!
+    page: Int
+    pageSize: Int
+}
+
+extend type Query {
+    getPosts: [Post!]
+    getPost(getPostInput: GetPostInput): Post
+}
+
+input CreatePostInput {
+    title: String!
+    content: String!
+    commentsAllowed: Boolean!
+}
+
+extend type Mutation {
+    createPost(createPostInput: CreatePostInput!): Post!
+}
