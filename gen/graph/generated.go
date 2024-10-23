@@ -49,12 +49,11 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Comment struct {
-		Comments  func(childComplexity int) int
-		CreatedAt func(childComplexity int) int
-		ID        func(childComplexity int) int
-		ParentID  func(childComplexity int) int
-		PostID    func(childComplexity int) int
-		Text      func(childComplexity int) int
+		Comments func(childComplexity int) int
+		ID       func(childComplexity int) int
+		ParentID func(childComplexity int) int
+		PostID   func(childComplexity int) int
+		Text     func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -117,13 +116,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Comment.Comments(childComplexity), true
-
-	case "Comment.createdAt":
-		if e.complexity.Comment.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.Comment.CreatedAt(childComplexity), true
 
 	case "Comment.id":
 		if e.complexity.Comment.ID == nil {
@@ -373,7 +365,6 @@ var sources = []*ast.Source{
     postId: ID!
     parentId: ID
     text: String!
-    createdAt: String!
     comments: [Comment!]
 }
 
@@ -768,50 +759,6 @@ func (ec *executionContext) fieldContext_Comment_text(_ context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Comment_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.Comment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Comment_createdAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Comment_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Comment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Comment_comments(ctx context.Context, field graphql.CollectedField, obj *models.Comment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Comment_comments(ctx, field)
 	if err != nil {
@@ -856,8 +803,6 @@ func (ec *executionContext) fieldContext_Comment_comments(_ context.Context, fie
 				return ec.fieldContext_Comment_parentId(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Comment_createdAt(ctx, field)
 			case "comments":
 				return ec.fieldContext_Comment_comments(ctx, field)
 			}
@@ -914,8 +859,6 @@ func (ec *executionContext) fieldContext_Mutation_createComment(ctx context.Cont
 				return ec.fieldContext_Comment_parentId(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Comment_createdAt(ctx, field)
 			case "comments":
 				return ec.fieldContext_Comment_comments(ctx, field)
 			}
@@ -1223,8 +1166,6 @@ func (ec *executionContext) fieldContext_Post_comments(_ context.Context, field 
 				return ec.fieldContext_Comment_parentId(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Comment_createdAt(ctx, field)
 			case "comments":
 				return ec.fieldContext_Comment_comments(ctx, field)
 			}
@@ -1541,8 +1482,6 @@ func (ec *executionContext) fieldContext_Subscription_commentSubscription(ctx co
 				return ec.fieldContext_Comment_parentId(ctx, field)
 			case "text":
 				return ec.fieldContext_Comment_text(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Comment_createdAt(ctx, field)
 			case "comments":
 				return ec.fieldContext_Comment_comments(ctx, field)
 			}
@@ -3492,11 +3431,6 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Comment_parentId(ctx, field, obj)
 		case "text":
 			out.Values[i] = ec._Comment_text(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "createdAt":
-			out.Values[i] = ec._Comment_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

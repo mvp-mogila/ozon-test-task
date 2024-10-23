@@ -3,12 +3,11 @@
 package models
 
 type Comment struct {
-	ID        string     `json:"id"`
-	PostID    string     `json:"postId"`
-	ParentID  *string    `json:"parentId,omitempty"`
-	Text      string     `json:"text"`
-	CreatedAt string     `json:"createdAt"`
-	Comments  []*Comment `json:"comments,omitempty"`
+	ID       string     `json:"id"`
+	PostID   string     `json:"postId"`
+	ParentID *string    `json:"parentId,omitempty"`
+	Text     string     `json:"text"`
+	Comments []*Comment `json:"comments,omitempty"`
 }
 
 type CreateCommentInput struct {
