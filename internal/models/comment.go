@@ -1,9 +1,15 @@
 package models
 
-type CommentModel struct {
-	ID       string
-	PostID   string
-	ParentID *string
-	Text     string
-	Comments []*CommentModel
+type Comment struct {
+	ID       int
+	PostID   int
+	ParentID *int
+	Content  string
+	Comments []*Comment
+}
+
+type CreateCommentInput struct {
+	PostID   int
+	ParentID *int
+	Content  string
 }

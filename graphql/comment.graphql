@@ -1,21 +1,21 @@
 type Comment {
-    id: ID!
-    postId: ID!
-    parentId: ID
-    text: String!
-    comments: [Comment!]
+    id: Int!
+    postId: Int!
+    parentId: Int
+    content: String!
+    comments(commentsCount: Int): [Comment!]
 }
 
 input CreateCommentInput {
-    postID: ID!
-    parentId: ID
-    text: String!
+    postID: Int!
+    parentId: Int
+    content: String!
 }
 
 extend type Mutation {
     createComment(createCommentInput: CreateCommentInput!): Comment!
 }
 
-extend type Subscription {
-    commentSubscription(postId: ID!): Comment!
+type Subscription {
+    commentSubscription(postId: Int!): Comment!
 }

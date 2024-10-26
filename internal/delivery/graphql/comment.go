@@ -6,27 +6,57 @@ package graphql
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/mvp-mogila/ozon-test-task/gen/graph"
-	"github.com/mvp-mogila/ozon-test-task/internal/models"
+	"github.com/mvp-mogila/ozon-test-task/internal/delivery/graphql/dto"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
+// Comments is the resolver for the comments field.
+func (r *commentResolver) Comments(ctx context.Context, obj *dto.Comment, commentsCount *int) ([]*dto.Comment, error) {
+	if commentsCount == nil {
+		commentsCount = new(int)
+	}
+
+	comments, err := r.CommentUsecase.GetCommentsForComment(ctx, obj.ID, *commentsCount)
+	if err != nil {
+		return nil, gqlerror.Wrap(err)
+	}
+
+	commentDTOs := make([]*dto.Comment, 0, len(comments))
+	for _, c := range comments {
+		commentDTO := dto.ConvertCommentModelToDTO(c)
+		commentDTOs = append(commentDTOs, &commentDTO)
+	}
+	return commentDTOs, nil
+}
+
 // CreateComment is the resolver for the createComment field.
-func (r *mutationResolver) CreateComment(ctx context.Context, createCommentInput models.CreateCommentInput) (*models.Comment, error) {
-	panic(fmt.Errorf("not implemented: CreateComment - createComment"))
+func (r *mutationResolver) CreateComment(ctx context.Context, createCommentInput dto.CreateCommentInput) (*dto.Comment, error) {
+	newComment, err := r.CommentUsecase.CreateComment(ctx, dto.ConvertCreateCommentInputDTOToModel(createCommentInput))
+	if err != nil {
+		return nil, gqlerror.Wrap(err)
+	}
+
+	commentDTO := dto.ConvertCommentModelToDTO(newComment)
+	return &commentDTO, nil
 }
 
 // CommentSubscription is the resolver for the commentSubscription field.
-func (r *subscriptionResolver) CommentSubscription(ctx context.Context, postID string) (<-chan *models.Comment, error) {
-	panic(fmt.Errorf("not implemented: CommentSubscription - commentSubscription"))
+func (r *subscriptionResolver) CommentSubscription(ctx context.Context, postID int) (<-chan *dto.Comment, error) {
+	commentDTOCh, err := r.CommentUsecase.CreateSubscriber(ctx, postID)
+	if err != nil {
+		return nil, gqlerror.Wrap(err)
+	}
+
+	return commentDTOCh, nil
 }
 
-// Mutation returns graph.MutationResolver implementation.
-func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
+// Comment returns graph.CommentResolver implementation.
+func (r *Resolver) Comment() graph.CommentResolver { return &commentResolver{r} }
 
 // Subscription returns graph.SubscriptionResolver implementation.
 func (r *Resolver) Subscription() graph.SubscriptionResolver { return &subscriptionResolver{r} }
 
-type mutationResolver struct{ *Resolver }
+type commentResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }

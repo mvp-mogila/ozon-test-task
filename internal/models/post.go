@@ -1,9 +1,15 @@
 package models
 
-type PostModel struct {
-	ID             string
-	Title          string
-	Content        string
-	CommetsAllowed bool
-	Comments       []CommentModel
+type Post struct {
+	ID            int
+	Title         string
+	Content       string
+	AllowComments bool
+	Comments      []Comment
+}
+
+type CreatePostInput struct {
+	Title         string
+	Content       string
+	AllowComments bool
 }

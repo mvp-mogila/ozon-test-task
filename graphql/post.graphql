@@ -1,28 +1,26 @@
 type Post {
-    id: ID!
+    postData: PostData
+    comments(page: Int, commentsCount: Int): [Comment!]!
+}
+
+type PostData {
+    id: Int!
     title: String!
     content: String!
-    commetsAllowed: Boolean!
-    comments: [Comment!]
+    allowComments: Boolean!
 }
 
-input GetPostInput {
-    id: ID!
-    page: Int
-    pageSize: Int
-}
-
-extend type Query {
-    getPosts: [Post!]
-    getPost(getPostInput: GetPostInput): Post
+type Query {
+    getPost(id: Int!): Post!
+    getPosts(page: Int, postsCount: Int): [PostData!]
 }
 
 input CreatePostInput {
     title: String!
     content: String!
-    commentsAllowed: Boolean!
+    allowComments: Boolean!
 }
 
-extend type Mutation {
-    createPost(createPostInput: CreatePostInput!): Post!
+type Mutation {
+    createPost(createPostInput: CreatePostInput!): PostData!
 }
